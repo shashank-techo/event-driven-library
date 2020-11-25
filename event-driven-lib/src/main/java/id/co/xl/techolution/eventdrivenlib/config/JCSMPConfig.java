@@ -34,6 +34,7 @@ public class JCSMPConfig{
         jcsmpProperties.setProperty(JCSMPProperties.USERNAME, solaceUsername);
         jcsmpProperties.setProperty(JCSMPProperties.VPN_NAME,  solaceVpn);
         jcsmpProperties.setProperty(JCSMPProperties.PASSWORD, solacePassword);
+//        jcsmpProperties.setProperty(JCSMPProperties.ACK_EVENT_MODE, JCSMPProperties.SUPPORTED_ACK_EVENT_MODE_PER_MSG);
         JCSMPSession jcsmpSession = JCSMPFactory.onlyInstance().createSession(jcsmpProperties);
         jcsmpSession.connect();
         return jcsmpSession;

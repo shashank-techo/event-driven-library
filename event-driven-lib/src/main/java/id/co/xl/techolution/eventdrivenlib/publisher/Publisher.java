@@ -20,27 +20,19 @@ public class Publisher {
     @Autowired
     JCSMPSession jcsmpSession;
 
-    public void publishToTopic(String topicName, String messageText){
+    public void publishToTopic(String topicName,DeliveryMode deliveryMode, String messageText, JCSMPStreamingPublishEventHandler jcsmpStreamingPublishEventHandler){
         try {
-            XMLMessageProducer prod = jcsmpSession.getMessageProducer(new JCSMPStreamingPublishEventHandler() {
-
-                @Override
-                public void responseReceived(String messageID) {
-                    System.out.println("Producer received response for msg: " + messageID);
-                }
-
-                @Override
-                public void handleError(String messageID, JCSMPException e, long timestamp) {
-                    System.out.printf("Producer received error for msg: %s@%s - %s%n",
-                            messageID,timestamp,e);
-                }
-            });
+            XMLMessageProducer prod = jcsmpSession.getMessageProducer(jcsmpStreamingPublishEventHandler);
             final Topic topic = JCSMPFactory.onlyInstance().createTopic(topicName);
             TextMessage msg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
             msg.setText(messageText);
+            msg.setDeliveryMode(deliveryMode);
+            msg.setAckImmediately(deliveryMode.equals(DeliveryMode.DIRECT)?Boolean.FALSE:Boolean.TRUE);
             prod.send(msg,topic);
         } catch (JCSMPException e) {
             e.printStackTrace();
         }
     }
+
+
 }
