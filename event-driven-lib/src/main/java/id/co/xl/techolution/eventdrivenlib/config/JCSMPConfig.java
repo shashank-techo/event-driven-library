@@ -26,6 +26,12 @@ public class JCSMPConfig{
     private String solaceUsername;
     @Value("${solace.password}")
     private String solacePassword;
+    @Value("${solace.java.connectRetries}")
+    private String solaceConnectRetries;
+    @Value("${solace.java.reconnectRetries}")
+    private String solaceReconnectRetries;
+    @Value("${solace.java.reconnectRetryWaitInMillis}")
+    private String solaceReconnectRetrywait;
 
     /**
      * connection configuration for a session
@@ -38,7 +44,12 @@ public class JCSMPConfig{
         jcsmpProperties.setProperty(JCSMPProperties.USERNAME, solaceUsername);
         jcsmpProperties.setProperty(JCSMPProperties.VPN_NAME,  solaceVpn);
         jcsmpProperties.setProperty(JCSMPProperties.PASSWORD, solacePassword);
+        JCSMPChannelProperties jcsmpChannelProperties = new JCSMPChannelProperties();
+        jcsmpChannelProperties.setConnectRetries(Integer.parseInt(solaceConnectRetries));
+        jcsmpChannelProperties.setReconnectRetries(Integer.parseInt(solaceReconnectRetries));
+        jcsmpChannelProperties.setReconnectRetryWaitInMillis(Integer.parseInt(solaceReconnectRetrywait));
 //        jcsmpProperties.setProperty(JCSMPProperties.ACK_EVENT_MODE, JCSMPProperties.SUPPORTED_ACK_EVENT_MODE_PER_MSG);
+        jcsmpProperties.setProperty(JCSMPProperties.CLIENT_CHANNEL_PROPERTIES,jcsmpChannelProperties);
         JCSMPSession jcsmpSession = JCSMPFactory.onlyInstance().createSession(jcsmpProperties);
         jcsmpSession.connect();
         return jcsmpSession;
