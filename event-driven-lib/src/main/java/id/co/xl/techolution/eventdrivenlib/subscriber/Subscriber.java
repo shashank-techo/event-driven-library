@@ -20,6 +20,14 @@ public class Subscriber {
     @Autowired
     JCSMPSession jcsmpSession;
 
+
+    /**
+     * method for subscribing to a topic
+     * @param               topicName
+     * @param               xmlMessageListener
+     *
+     *
+     * */
     public void subscribeTopic(String topicName, XMLMessageListener xmlMessageListener){
         try {
             final XMLMessageConsumer cons = jcsmpSession.getMessageConsumer(xmlMessageListener);

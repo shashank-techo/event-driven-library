@@ -27,6 +27,10 @@ public class JCSMPConfig{
     @Value("${solace.password}")
     private String solacePassword;
 
+    /**
+     * connection configuration for a session
+     *
+     * */
     @Bean
     public JCSMPSession getSession() throws InvalidPropertiesException, JCSMPException{
         final JCSMPProperties jcsmpProperties = new JCSMPProperties();

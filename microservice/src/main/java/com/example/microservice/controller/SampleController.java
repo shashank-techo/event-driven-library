@@ -32,28 +32,20 @@ public class SampleController {
     @GetMapping(value="/default-api")
     public ResponseEntity<String> defaultMethod()
     {
-        publisher.publishToTopic("topic1", DeliveryMode.PERSISTENT,"Hello topic 1", new JCSMPStreamingPublishEventHandler() {
-            @Override
-            public void handleError(String s, JCSMPException e, long l) {
-                logger.info("exception occurred : "+s);
-            }
-            @Override
-            public void responseReceived(String s) {
-                logger.info("response received : "+s);
-            }
-        });
-        publisher.publishToTopic("topic2", DeliveryMode.DIRECT,"Hello topic 2",new JCSMPStreamingPublishEventHandler() {
-            @Override
-            public void handleError(String s, JCSMPException e, long l) {
-                logger.info("exception occurred : "+s);
-            }
-            @Override
-            public void responseReceived(String s) {
-                logger.info("response received : "+s);
-            }
-        });
 
-        queuePublisher.publishToQueue("queue", Arrays.asList("demo messgae"));
+        // publishing message to topic along with a callback handler
+        publisher.publishToTopic("topic1", DeliveryMode.DIRECT,"Hello topic 1", new JCSMPStreamingPublishEventHandler() {
+            @Override
+            public void handleError(String s, JCSMPException e, long l) {
+                logger.info("exception occurred : "+s);
+            }
+            @Override
+            public void responseReceived(String s) {
+                logger.info("response received : "+s);
+            }
+        });
+        //publishing message to a queue
+        queuePublisher.publishToQueue("my_q", Arrays.asList("demo messgae"));
         return new ResponseEntity<>("Done", HttpStatus.OK);
     }
 

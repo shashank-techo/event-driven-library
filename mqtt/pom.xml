@@ -8,10 +8,10 @@
 		<version>2.4.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.example</groupId>
-	<artifactId>microservice</artifactId>
+	<groupId>com.sample.solace</groupId>
+	<artifactId>mqtt</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>microservice</name>
+	<name>mqtt</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -20,25 +20,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>id.co.xl.techolution</groupId>
-			<artifactId>event-driven-lib</artifactId>
-			<version>1.0.0</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.eclipse.paho</groupId>
+			<artifactId>org.eclipse.paho.client.mqttv3</artifactId>
+			<version>1.2.0</version>
+		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-<!--		<dependency>-->
-<!--			<groupId>com.solace.spring.boot</groupId>-->
-<!--			<artifactId>solace-jms-spring-boot-starter</artifactId>-->
-<!--			<version>1.0.0</version>-->
-<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

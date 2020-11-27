@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 @Component
 public class QueuePublisher {
@@ -20,23 +19,20 @@ public class QueuePublisher {
     @Autowired
     JCSMPSession jcsmpSession;
 
+    /**
+     * method to publish a list to a queue
+     * @param           queueName
+     * @param           messageList
+     *
+     *
+     * */
     public void publishToQueue(String queueName, List<String> messageList){
         final LinkedList<MessageInfo> msgList = new LinkedList<>();
-//        CountDownLatch countDownLatch = new CountDownLatch(messageList.size());
         try {
             final Queue queue = JCSMPFactory.onlyInstance().createQueue(queueName);
-            final EndpointProperties endpointProps = new EndpointProperties();
-
-            //setting queue properties to consume and exclusive
-            endpointProps.setPermission(EndpointProperties.PERMISSION_CONSUME);
-            endpointProps.setAccessType(EndpointProperties.ACCESSTYPE_EXCLUSIVE);
-
-            // Actually provision it, and do not fail if it already exists
-            jcsmpSession.provision(queue, endpointProps, JCSMPSession.FLAG_IGNORE_ALREADY_EXISTS);
 
             for (int i = 1; i <= messageList.size(); i++) {
                 QueuePublisherCallback queuePublisherCallback = new QueuePublisherCallback();
-//                queuePublisherCallback.setCountDownLatch(countDownLatch);
                 XMLMessageProducer prod = jcsmpSession.getMessageProducer(queuePublisherCallback);
                 TextMessage msg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
                 msg.setDeliveryMode(DeliveryMode.PERSISTENT);
@@ -50,17 +46,33 @@ public class QueuePublisher {
         } catch (JCSMPException e) {
             e.printStackTrace();
         }
-//        try {
-//            countDownLatch.await();
-//        } catch (InterruptedException e) {
-//            logger.info("queue thread interrupted..");
-//        }
         // Process the replies
         while (msgList.peek() != null) {
             final MessageInfo messageInfo = msgList.poll();
             logger.info("Removing acknowledged message ( {} ) from application list.\n", messageInfo);
         }
-
     }
 
+    /**
+     * method to publish a message to a queue
+     * @param           queueName
+     * @param           message
+     *
+     *
+     * */
+    public void publishToQueue(String queueName, String message){
+        try {
+            final Queue queue = JCSMPFactory.onlyInstance().createQueue(queueName);
+            QueuePublisherCallback queuePublisherCallback = new QueuePublisherCallback();
+            XMLMessageProducer prod = jcsmpSession.getMessageProducer(queuePublisherCallback);
+            TextMessage msg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
+            msg.setDeliveryMode(DeliveryMode.PERSISTENT);
+            msg.setText(message);
+            prod.send(msg,queue);
+
+        } catch (JCSMPException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
