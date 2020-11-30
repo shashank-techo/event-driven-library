@@ -4,7 +4,6 @@ import com.solacesystems.jcsmp.JCSMPException;
 import com.solacesystems.jcsmp.JCSMPSession;
 import id.co.xl.techolution.eventdrivenlib.config.JCSMPConfig;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,24 +14,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 class MicroserviceApplicationTests {
-
-//	@MockBean
-//	JCSMPSession jcsmpSession;
-//
-//	@Mock
-//	JCSMPConfig jcsmpConfig;
-
-//	@MockBean
-//	Publisher publisher;
-//
-//	@MockBean
-//	Subscriber subscriber;
-//
-//	@InjectMocks
-//	QueuePublisher queuePublisher;
-//
-//	@Mock
-//	QueueSubscriber queueSubscriber;
 
     @Autowired
     private ApplicationContext applicationContext;
