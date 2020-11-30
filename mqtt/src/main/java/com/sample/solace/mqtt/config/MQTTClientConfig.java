@@ -27,6 +27,7 @@ public class MQTTClientConfig {
         mqttConnectOptions.setCleanSession(true);
         mqttConnectOptions.setUserName(username);
         mqttConnectOptions.setPassword(password.toCharArray());
+        mqttConnectOptions.setAutomaticReconnect(Boolean.TRUE);
         mqttClient.connect(mqttConnectOptions);
         return mqttClient;
     }

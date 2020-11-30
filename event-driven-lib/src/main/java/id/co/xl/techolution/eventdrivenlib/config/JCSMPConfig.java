@@ -4,8 +4,10 @@ import com.solacesystems.jcsmp.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 
 /**
  * Configuration class to setup connection to solace broker
@@ -38,6 +40,7 @@ public class JCSMPConfig{
      *
      * */
     @Bean
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public JCSMPSession getSession() throws InvalidPropertiesException, JCSMPException{
         final JCSMPProperties jcsmpProperties = new JCSMPProperties();
         jcsmpProperties.setProperty(JCSMPProperties.HOST, solaceHost);

@@ -1,6 +1,7 @@
 package id.co.xl.techolution.eventdrivenlib.publisher;
 
 import com.solacesystems.jcsmp.*;
+import id.co.xl.techolution.eventdrivenlib.model.MessageInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,18 +27,25 @@ public class Publisher {
      * @param           topicName
      * @param           deliveryMode
      * @param           messageText
-     * @param           jcsmpStreamingPublishEventHandler
+     * @param           jcsmpStreamingPublishCorrelatingEventHandler
      *
      *
      * */
-    public void publishToTopic(String topicName,DeliveryMode deliveryMode, String messageText, JCSMPStreamingPublishEventHandler jcsmpStreamingPublishEventHandler){
+    public void publishToTopic(String topicName,DeliveryMode deliveryMode, String messageText, int retryCount, JCSMPStreamingPublishCorrelatingEventHandler jcsmpStreamingPublishCorrelatingEventHandler){
         try {
-            XMLMessageProducer prod = jcsmpSession.getMessageProducer(jcsmpStreamingPublishEventHandler);
+            XMLMessageProducer prod = jcsmpSession.getMessageProducer(jcsmpStreamingPublishCorrelatingEventHandler);
             final Topic topic = JCSMPFactory.onlyInstance().createTopic(topicName);
             TextMessage msg = JCSMPFactory.onlyInstance().createMessage(TextMessage.class);
             msg.setText(messageText);
             msg.setDeliveryMode(deliveryMode);
             msg.setAckImmediately(deliveryMode.equals(DeliveryMode.DIRECT)?Boolean.FALSE:Boolean.TRUE);
+            final MessageInfo msgCorrelationInfo = new MessageInfo(1);
+            msgCorrelationInfo.sessionIndependentMessage = msg;
+            msgCorrelationInfo.topicName = topicName;
+            msgCorrelationInfo.message = msg.getText();
+            msgCorrelationInfo.attemptsLeft = retryCount;
+            msgCorrelationInfo.deliveryMode = deliveryMode;
+            msg.setCorrelationKey(msgCorrelationInfo);
             prod.send(msg,topic);
         } catch (JCSMPException e) {
             e.printStackTrace();
@@ -51,13 +59,19 @@ public class Publisher {
      * your text data/message inside the TextMessage wrapper
      * @param           topicName
      * @param           textMessage
-     * @param           jcsmpStreamingPublishEventHandler
+     * @param           jcsmpStreamingPublishCorrelatingEventHandler
      *
      * */
-    public void publishToTopic(String topicName, TextMessage textMessage, JCSMPStreamingPublishEventHandler jcsmpStreamingPublishEventHandler){
+    public void publishToTopic(String topicName, TextMessage textMessage, int retryCount, JCSMPStreamingPublishCorrelatingEventHandler jcsmpStreamingPublishCorrelatingEventHandler){
         try {
-            XMLMessageProducer prod = jcsmpSession.getMessageProducer(jcsmpStreamingPublishEventHandler);
+            XMLMessageProducer prod = jcsmpSession.getMessageProducer(jcsmpStreamingPublishCorrelatingEventHandler);
             final Topic topic = JCSMPFactory.onlyInstance().createTopic(topicName);
+            final MessageInfo msgCorrelationInfo = new MessageInfo(1);
+            msgCorrelationInfo.sessionIndependentMessage = textMessage;
+            msgCorrelationInfo.topicName = topicName;
+            msgCorrelationInfo.message = textMessage.getText();
+            msgCorrelationInfo.attemptsLeft = retryCount;
+            textMessage.setCorrelationKey(msgCorrelationInfo);
             prod.send(textMessage,topic);
         } catch (JCSMPException e) {
             e.printStackTrace();
